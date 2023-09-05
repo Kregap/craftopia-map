@@ -12,9 +12,15 @@
         </script>
 
         <style>
-            body {background-color: dimgray;}
+            body {
+                background-color: dimgray;
+                margin: 0px;
+            }
 
-            #map { height: 100%; background-color: #296568;}
+            #map { 
+                height: 100%; 
+                background-color: #296568;
+            }
 
             #map-legend{
                 position:absolute;
@@ -35,10 +41,13 @@
         <div id="map"></div>
         <div id="map-legend"><img src="images/map-legend.png"/></div>
         <div id="game-logo"><img src="images/craftopia-logo.png"/></div>
+
         <script type="text/javascript">
             var map = L.map('map', {
                 crs: L.CRS.Simple,
-                minZoom: -1,
+                zoomSnap: 0,
+                zoomDelta: 0.25,
+                minZoom: -1.75,
                 maxZoom: 1
             });
             var bounds = [[0,0], [3000,6000]];
