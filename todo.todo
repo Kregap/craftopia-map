@@ -1,10 +1,9 @@
 Todo:
  ☐ custom image markers
  ☐ togglable marker groups
- ☐ add link with source to the page
-
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
+ ✔ add link with source to the page @project(Todo)
  ✔ legend, collapsible into a button @project(Todo)
  ✔ credits, collapsible into a button @project(Todo)
  ✔ more scroll levels that are less noticable @project(Todo)
