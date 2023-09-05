@@ -18,6 +18,7 @@
             }
 
             #game-logo{
+                pointer-events: none;
                 position: absolute;
                 z-index: 999;
                 top: 25px;
@@ -49,6 +50,30 @@
 
             button:hover {
                 background-color: #f4f4f4;
+            }
+
+            a.credits:link {
+                color: #1c7088;
+                background-color: transparent;
+                text-decoration: none;
+            }
+
+            a.credits:visited {
+                color: #1c7088;
+                background-color: transparent;
+                text-decoration: none;
+            }
+
+            a.credits:hover {
+                color: #213621;
+                background-color: transparent;
+                text-decoration: underline;
+            }
+
+            a.credits:active {
+                color: black;
+                background-color: transparent;
+                text-decoration: underline;
             }
 
             #legendOpen, #legendModal{
@@ -191,7 +216,7 @@
         </div>
 
         <div id="creditsModal">
-            <span class="header">Credits</span>
+            <span class="header"><a class="credits" href="https://www.reddit.com/r/Craftopia_/comments/160rb5x/big_craftopia_map_iii">Credits</a></span>
             <button id="closeLegend" onclick="closeCredits()">✖</button>
 
             <div class="spacer"></div>
@@ -246,7 +271,7 @@
             }
 
             openLegend()
-            closeCredits()
+            openCredits()
         </script>
     </body>
 </html>
