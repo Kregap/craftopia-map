@@ -1,6 +1,4 @@
-ToDo:
- ☐ Add title and icon
- ☐ more scroll levels that are less noticable
+Todo:
  ☐ legend, collapsible into a button
  ☐ credits, collapsible into a button
  ☐ custom image markers
@@ -8,4 +6,6 @@ ToDo:
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
+ ✔ more scroll levels that are less noticable @project(Todo)
+ ✔ Add title and icon @project(ToDo)
  ✔ git repo @project(ToDo)
