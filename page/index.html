@@ -13,8 +13,20 @@
 
         <style>
             body {
-                background-color: dimgray;
                 margin: 0px;
+                font-family: Verdana, sans-serif
+            }
+
+            #game-logo{
+                position: absolute;
+                z-index: 999;
+                top: 25px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            div.spacer {
+                height: 5px;
             }
 
             #map { 
@@ -22,25 +34,184 @@
                 background-color: #296568;
             }
 
-            #map-legend{
-                position:absolute;
-                z-index:999;
-                top:  5px;
-                left: 50px;
+            button, #legendModal, #creditsModal {
+                border: 1px solid rgba(0, 0, 0, 0.7);
+                border-radius: 2px;
             }
 
-            #game-logo{
-                position:absolute;
-                z-index:999;
-                top:  25px;
-                left: 300px;
+            button {
+                font-weight: bold;
+                background-color: #fff;
+                height: 30px;
+                width: 30px;
             }
+
+
+            button:hover {
+                background-color: #f4f4f4;
+            }
+
+            #legendOpen, #legendModal{
+                position: absolute;
+                top:  12px;
+                left: 55px;
+            }
+
+            #legendOpen {
+                z-index: 998;
+            }
+
+            #closeLegend {
+                position: absolute;
+                right: 5px;
+            }
+
+            .header {
+                margin: 5px;
+                font-weight: bold;
+                font-size: 30;
+            }
+
+            .legendPerson {
+                padding: 2px;
+                margin-left: 5px;
+                display: flex;
+                align-items:center;
+            }
+
+            .legendPerson span {
+                margin-left: 5px;
+                color: rgb(40, 40, 40);
+            }
+
+            #legendModal {
+                z-index: 999;
+                padding: 5px;
+                background: rgba(255, 255, 255, 0.7);
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+                color: black;
+            }
+
+            #legendClose {
+                right: 0;
+                position: absolute;
+            }
+
+            #creditsOpen, #creditsModal {
+                position: absolute;
+                top:  12px;
+                right: 12px;
+            }
+
+            #creditsOpen {
+                z-index: 998;
+            }
+
+            #creditsModal {
+                z-index: 999;
+                padding: 10px;
+                background: rgb(220, 220, 220);
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+                color: #000;
+            }
+
+            span.creditsNickname {
+                margin-left: 10px;
+                color: black;
+            }
+
+            span.creditsDescription {
+                margin-left: 20px;
+                font-size: 12px;
+                color: dimgray;
+            }
+
         </style>
     </head>
     <body>
         <div id="map"></div>
-        <div id="map-legend"><img src="images/map-legend.png"/></div>
         <div id="game-logo"><img src="images/craftopia-logo.png"/></div>
+
+        <div id="legendOpen">
+            <button onclick="openLegend()">?</button>
+        </div>
+        <div id="legendModal">
+            <span class="header">Legend</span>
+            <button id="closeLegend" onclick="closeLegend()">✖</button>
+
+            <div class="spacer"></div>
+
+            <div class="legendPerson">
+                <img src="images/icon-fighting.png">
+                <span style="">Fighting Trial</span>
+            </div>
+            <div class="legendPerson">
+                <img src="images/icon-sniping.png">
+                <span style="">Sniping Trial</span>
+            </div>
+            <div class="legendPerson">
+                <img src="images/icon-gliding.png">
+                <span style="">Gliding Trial</span>
+            </div>
+            <div class="legendPerson">
+                <img src="images/icon-underworld.png">
+                <span style="">Underworld Trial</span>
+            </div>
+            <div class="legendPerson">
+                <img src="images/icon-collecting.png">
+                <span style="">Collecting Trial</span>
+            </div>
+            <div class="legendPerson">
+                <img src="images/icon-surfing.png">
+                <span style="">Surfing Trial</span>
+            </div>
+
+            <div class="spacer"></div>
+
+            <div class="legendPerson">
+                <img src="images/icon-archeologist.png">
+                <span style="">Archeologist Camillie</span>
+            </div>
+            <div class="legendPerson">
+                <img src="images/icon-extractor.png">
+                <span style="">Extractor Paracelsus</span>
+            </div>
+            <div class="legendPerson">
+                <img src="images/icon-merchant.png">
+                <span style="">Merchant Smith</span>
+            </div>
+            <div class="legendPerson">
+                <img src="images/icon-farmer.png">
+                <span style="">Farmer Smith</span>
+            </div>
+        </div>
+
+        <div id="creditsOpen">
+            <button onclick="openCredits()"><img src="images/icon-credits.png"></button>
+        </div>
+
+        <div id="creditsModal">
+            <span class="header">Credits</span>
+            <button id="closeLegend" onclick="closeCredits()">✖</button>
+
+            <div class="spacer"></div>
+
+            <span class="creditsNickname"   >Shinjula</br></span>
+            <span class="creditsDescription">for the map</span>
+            <div class="spacer"></div>
+
+            <span class="creditsNickname"   >IGrxvityl</br></span>
+            <span class="creditsDescription">for the Bedrock Locations</span>
+            <div class="spacer"></div>
+
+            <span class="creditsNickname"   >RaidenMatsui</br></span>
+            <span class="creditsDescription">for the Boss Locations and Tower Materials</span>
+            <div class="spacer"></div>
+
+            <span class="creditsNickname"   >Kregap</br></span>
+            <span class="creditsDescription">for converting it to a webpage</span>
+            <div class="spacer"></div>
+        </div>
 
         <script type="text/javascript">
             var map = L.map('map', {
@@ -48,11 +219,34 @@
                 zoomSnap: 0,
                 zoomDelta: 0.25,
                 minZoom: -1.75,
-                maxZoom: 1
+                maxZoom: 0
             });
             var bounds = [[0,0], [3000,6000]];
             var image = L.imageOverlay('images/craftopia-map.jpg', bounds).addTo(map);
             map.fitBounds(bounds);
+
+            function openLegend() {
+                document.getElementById("legendModal").style.display = "block";
+                document.getElementById("legendOpen").style.display = "none";
+            }
+
+            function closeLegend() {
+                document.getElementById("legendModal").style.display = "none";
+                document.getElementById("legendOpen").style.display = "block";
+            }
+
+            function openCredits() {
+                document.getElementById("creditsModal").style.display = "block";
+                document.getElementById("creditsOpen").style.display = "none";
+            }
+
+            function closeCredits() {
+                document.getElementById("creditsModal").style.display = "none";
+                document.getElementById("creditsOpen").style.display = "block";
+            }
+
+            openLegend()
+            closeCredits()
         </script>
     </body>
 </html>
