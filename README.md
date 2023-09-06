@@ -1,0 +1,1 @@
+Craftopia map is a fan Craftopia project that provides a webpage with a map that helps in localising various points of interest in Craftopia.
