@@ -3,7 +3,9 @@
         <title>Craftopia Map</title>
         <link rel="icon" type="image/x-icon" href="images/favicon.png">
 
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        <!-- Leaflet - map plugin -->
+        <link rel="stylesheet"
+            href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
             integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
             crossorigin=""/>
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
@@ -11,10 +13,27 @@
             crossorigin="">
         </script>
 
+        <!-- Bootstrap - toolkit -->
+        <link rel="stylesheet" 
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+            integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
+            crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" 
+            crossorigin="anonymous">
+        </script>
+
+        <!-- My files -->
+        <link rel="stylesheet" type="text/css" href="css/credits.css">
+
         <style>
+            :root {
+                --color-accent: #1c7088;
+            }
+
             body {
                 margin: 0px;
-                font-family: Verdana, sans-serif
+                font-family: Helvetica Neue, sans-serif
             }
 
             #game-logo{
@@ -26,18 +45,15 @@
                 transform: translateX(-50%);
             }
 
-            div.spacer {
-                height: 5px;
-            }
-
             #map { 
                 height: 100%; 
                 background-color: #296568;
             }
 
-            button, #legendModal, #creditsModal {
+            button, .leaflet-modal {
                 border: 1px solid rgba(0, 0, 0, 0.7);
-                border-radius: 2px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+                border-radius: 3px;
             }
 
             button {
@@ -52,149 +68,11 @@
                 background-color: #f4f4f4;
             }
 
-            a.credits:link {
-                color: #1c7088;
-                background-color: transparent;
-                text-decoration: none;
-            }
-
-            a.credits:visited {
-                color: #1c7088;
-                background-color: transparent;
-                text-decoration: none;
-            }
-
-            a.credits:hover {
-                color: #213621;
-                background-color: transparent;
-                text-decoration: underline;
-            }
-
-            a.credits:active {
-                color: black;
-                background-color: transparent;
-                text-decoration: underline;
-            }
-
-            #legendOpen, #legendModal{
-                position: absolute;
-                top:  11px;
-                left: 55px;
-            }
-
-            #legendOpen {
-                z-index: 998;
-            }
-
-            #closeLegend {
-                position: absolute;
-                right: 5px;
-            }
-
-            .header {
-                margin: 5px;
-                font-weight: bold;
-                font-size: 30;
-            }
-
-            .legendPerson {
-                padding: 2px;
-                margin-left: 5px;
-                display: flex;
-                align-items:center;
-            }
-
-            .legendPerson span {
-                margin-left: 5px;
-                color: rgb(40, 40, 40);
-            }
-
-            #legendModal {
-                z-index: 999;
-                padding: 5px;
-                background: rgba(255, 255, 255, 0.7);
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-                color: black;
-            }
-
-            #legendClose {
-                right: 0;
-                position: absolute;
-            }
-
-            #creditsOpen, #creditsModal {
-                position: absolute;
-                top:  68px;
-                right: 12px;
-            }
-
-            #creditsOpen {
-                z-index: 998;
-            }
-
-            #creditsModal {
-                z-index: 999;
-                padding: 10px;
-                background: white;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-                color: #000;
-            }
-
-            span.creditsNickname {
-                margin-left: 10px;
-                color: black;
-            }
-
-            span.creditsDescription {
-                margin-left: 20px;
-                font-size: 12px;
-                color: dimgray;
-            }
-
         </style>
     </head>
     <body>
         <div id="map"></div>
         <div id="game-logo"><img src="images/craftopia-logo.png"/></div>
-
-        <div id="legendOpen">
-            <button onclick="openLegend()">?</button>
-        </div>
-        <div id="legendModal">
-            <span class="header">Legend</span>
-            <button id="closeLegend" onclick="closeLegend()">x</button>
-
-            <div class="spacer"></div>
-
-            <p>Work in progress...</p>
-        </div>
-
-        <div id="creditsOpen">
-            <button onclick="openCredits()"><img src="images/icon-credits.png"></button>
-        </div>
-
-        <div id="creditsModal">
-            <span class="header"><a class="credits" href="https://www.reddit.com/r/Craftopia_/comments/160rb5x/big_craftopia_map_iii">Credits</a></span>
-            <button id="closeLegend" onclick="closeCredits()">x</button>
-
-            <div class="spacer"></div>
-
-            <span class="creditsNickname"   >Shinjula</br></span>
-            <span class="creditsDescription">for the map, markers, majority of locations</span>
-            <div class="spacer"></div>
-
-            <span class="creditsNickname"   >IGrxvityl</br></span>
-            <span class="creditsDescription">for the Bedrock Locations</span>
-            <div class="spacer"></div>
-
-            <span class="creditsNickname"   >RaidenMatsui</br></span>
-            <span class="creditsDescription">for the Boss Locations and Tower Materials</span>
-            <div class="spacer"></div>
-
-            <span class="creditsNickname"   >Kregap</br></span>
-            <span class="creditsDescription">for converting it to a webpage</span>
-            <div class="spacer"></div>
-        </div>
 
         <script type="text/javascript">
             var map = L.map('map', {
@@ -207,29 +85,6 @@
             var bounds = [[0,0], [3000,6000]];
             var image = L.imageOverlay('images/maps/Map - Blank.png', bounds).addTo(map);
             map.fitBounds(bounds);
-
-            function openLegend() {
-                document.getElementById("legendModal").style.display = "block";
-                document.getElementById("legendOpen").style.display = "none";
-            }
-
-            function closeLegend() {
-                document.getElementById("legendModal").style.display = "none";
-                document.getElementById("legendOpen").style.display = "block";
-            }
-
-            function openCredits() {
-                document.getElementById("creditsModal").style.display = "block";
-                document.getElementById("creditsOpen").style.display = "none";
-            }
-
-            function closeCredits() {
-                document.getElementById("creditsModal").style.display = "none";
-                document.getElementById("creditsOpen").style.display = "block";
-            }
-
-            closeLegend()
-            closeCredits()
 
             function onMapClick(e) {
                 const coordinates = `${e.latlng}`.substring(7).slice(0, -1).replace(/\.[0-9]*/g, '')
@@ -245,5 +100,6 @@
         </script>
         <script type="module" src="js/markers.js"></script>
         <script type="module" src="js/community.js"></script>
+        <script type="module" src="js/credits.js"></script>
     </body>
 </html>

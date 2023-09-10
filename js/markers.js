@@ -1,18 +1,16 @@
 import * as spreadsheet from './spreadsheet.js'
 
-const defaultCategoryName = 'Default'
+async function downloadMarkers() {
+    const sheetName = 'markers';
+    const query = 'Select B,C,D,E,F,G,H';
+    return spreadsheet.fetchTable(sheetName, query)
+}
 
-let sheetMarkers = []
-let sheetCoordinates = []
-const sheetMarkersPromise = spreadsheet.downloadMarkers().then(
-    (value) => { sheetMarkers = value }
-)
-const sheetCoordinatesPromise = spreadsheet.downloadCoordinates().then(
-    (value) => { sheetCoordinates = value }
-)
-await Promise.allSettled([sheetMarkersPromise, sheetCoordinatesPromise])
-// console.log(sheetMarkers)
-// console.log(sheetCoordinates)
+async function downloadCoordinates() {
+    const sheetName = 'coordinates';
+    const query = 'Select A,D,E';
+    return spreadsheet.fetchTable(sheetName, query)
+}
 
 const getMeta = (url) =>
     new Promise((resolve, reject) => {
@@ -47,6 +45,21 @@ function arraysFromString(text) {
     }
     return arrays
 }
+
+const defaultCategoryName = 'Default'
+
+let sheetMarkers = []
+let sheetCoordinates = []
+const sheetMarkersPromise = downloadMarkers().then(
+    (value) => { sheetMarkers = value }
+)
+const sheetCoordinatesPromise = downloadCoordinates().then(
+    (value) => { sheetCoordinates = value }
+)
+await Promise.allSettled([sheetMarkersPromise, sheetCoordinatesPromise])
+// console.log(sheetMarkers)
+// console.log(sheetCoordinates)
+
 
 // Prepare all marker types
 const markerTypes = {}
@@ -108,7 +121,9 @@ Object.keys(markers).forEach((category) => {
                 case 'point':
                     return L.marker(
                         [marker['coordinates'][0], marker['coordinates'][1]],
-                        { icon: L.icon({
+                        {
+                            title: marker['name'],
+                            icon: L.icon({
                             iconUrl: marker['imageUrl'],
                             iconSize: marker['iconSize'],
                             tooltipAnchor: [marker['iconSize'][0]/2, 0]

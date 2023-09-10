@@ -6,10 +6,10 @@ L.Control.Community = L.Control.extend({
   },
 
   onAdd: function(map) {
-    var container = L.DomUtil.create('div', 'leaflet-control-community');
-    var link = L.DomUtil.create('a', 'community-link', container)
-    var button = L.DomUtil.create('button', 'community-button', link);
-    var icon = L.DomUtil.create('img', 'community-icon', button)
+    const container = L.DomUtil.create('div', 'leaflet-control-community');
+    const link = L.DomUtil.create('a', 'leaflet-control-community-link', container)
+    const button = L.DomUtil.create('button', 'leaflet-control-community-button', link);
+    const icon = L.DomUtil.create('img', 'leaflet-control-community-icon', button)
     link.href = this.options.url
     button.style = 'width: 44; height: 44; padding: 3px;'
     icon.src = this.options.iconUrl
@@ -19,5 +19,5 @@ L.Control.Community = L.Control.extend({
   },
 })
 
-let communityButton = new L.Control.Community
+const communityButton = new L.Control.Community
 communityButton.addTo(map);
