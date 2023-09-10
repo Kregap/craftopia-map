@@ -31,10 +31,12 @@
 
         <!-- My files -->
         <link rel="stylesheet" type="text/css" href="css/credits.css">
+        <link rel="stylesheet" type="text/css" href="css/coordinates.css">
 
         <style>
             :root {
                 --color-accent: #1c7088;
+                --color-faded: gray;
             }
 
             body {
@@ -58,9 +60,11 @@
             }
 
             button, .leaflet-modal {
+                background-color: white;
                 border: 1px solid rgba(0, 0, 0, 0.7);
                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
                 border-radius: 3px;
+                padding: 3px;
             }
 
             button {
@@ -81,32 +85,6 @@
         <div id="map"></div>
         <div id="game-logo"><img src="images/craftopia-logo.png"/></div>
 
-        <script type="text/javascript">
-            var map = L.map('map', {
-                crs: L.CRS.Simple,
-                zoomSnap: 0,
-                zoomDelta: 0.25,
-                minZoom: -1.75,
-                maxZoom: 0
-            });
-            var bounds = [[0,0], [3000,6000]];
-            var image = L.imageOverlay('images/maps/Map - Blank.png', bounds).addTo(map);
-            map.fitBounds(bounds);
-
-            function onMapClick(e) {
-                const coordinates = `${e.latlng}`.substring(7).slice(0, -1).replace(/\.[0-9]*/g, '')
-                navigator.clipboard.writeText(`[${coordinates}]`);
-            }
-            // When testing switch to true
-            var testing = false
-            if (testing) {
-                // Copy coordinates to clipboard when clicking on the map.
-                map.on('click', onMapClick);
-            }
-
-        </script>
-        <script type="module" src="js/markers.js"></script>
-        <script type="module" src="js/community.js"></script>
-        <script type="module" src="js/credits.js"></script>
+        <script type="module" src="main.js"></script>
     </body>
 </html>

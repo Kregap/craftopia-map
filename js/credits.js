@@ -48,5 +48,6 @@ L.Control.Credits = L.Control.extend({
 	}
 })
 
-const creditsButton = new L.Control.Credits
-creditsButton.addTo(map)
+export function getControl() {
+	return new L.Control.Credits()
+}

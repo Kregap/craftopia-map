@@ -19,5 +19,6 @@ L.Control.Community = L.Control.extend({
   },
 })
 
-const communityButton = new L.Control.Community
-communityButton.addTo(map);
+export function getControl() {
+  return new L.Control.Community()
+}

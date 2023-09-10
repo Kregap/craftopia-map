@@ -1,0 +1,14 @@
+.leaflet-control-coordinates {
+	height: 30px;
+	padding: 3px;
+	width: 140px;
+	background-color: white;
+	text-align: center;
+	margin: 0px;
+	top: 50%;
+}
+
+.leaflet-control-coordinates pre {
+	margin: 0px;
+	font-size: 1rem;
+}
