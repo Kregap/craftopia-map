@@ -23,23 +23,39 @@ coordinatesLabel.addTo(map)
 communityButton.addTo(map)
 creditsButton.addTo(map)
 
-map.on('mousemove', (ev) => {
-	coordinatesLabel.updateCoordinates(
-		'[' +
-		String(Math.round(ev.latlng.lat)).padStart(5, ' ') +
-		', ' +
-		String(Math.round(ev.latlng.lng)).padStart(5, ' ') + ']'
-	)
-})
+// Coordinates
+let x = 0
+let y = 0
 
 function onMapClick(e) {
-    const coordinates = `${e.latlng}`.substring(7).slice(0, -1).replace(/\.[0-9]*/g, '')
-    navigator.clipboard.writeText(`[${coordinates}]`);
-}
-// When testing switch to true
-const testing = false
-if (testing) {
-    // Copy coordinates to clipboard when clicking on the map.
-    map.on('click', onMapClick);
+    const coordinates = `[${y}, ${x}]`
+    navigator.clipboard.writeText(coordinates);
+    console.log(`copied coordinates: ${coordinates} to clipboard`)
+    const coordinatesText = L.DomUtil.get('coordinates')
+    coordinatesText.classList.remove('flash')
+    requestAnimationFrame((time) => {
+		requestAnimationFrame((time) => {
+    		coordinatesText.classList.add('flash')
+		})
+	})
 }
 
+const copySwitch = L.DomUtil.get('copySwitch')
+copySwitch.addEventListener('click', function(ev) {
+	if(copySwitch.checked) {
+		map.on('click', onMapClick)
+	} else {
+		map.off('click', onMapClick)
+	}
+})
+
+map.on('mousemove', (ev) => {
+	x = Math.round(ev.latlng.lng)
+	y = Math.round(ev.latlng.lat)
+	coordinatesLabel.updateCoordinates(
+		'[' +
+		String(y).padStart(5, ' ') +
+		', ' +
+		String(x).padStart(5, ' ') + ']'
+	)
+})

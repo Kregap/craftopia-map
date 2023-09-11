@@ -123,7 +123,6 @@ export async function loadMarkers(map) {
                         return L.marker(
                             [marker['coordinates'][0], marker['coordinates'][1]],
                             {
-                                title: marker['name'],
                                 icon: L.icon({
                                 iconUrl: marker['imageUrl'],
                                 iconSize: marker['iconSize'],
