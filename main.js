@@ -31,7 +31,7 @@ const defaultCategoryName = 'Default'
 const markersTree = await markers.getTree(defaultCategoryName)
 const types = markers.getTypes(markersTree)
 
-const markersInLayers = await markers.getTree(defaultCategoryName)
+const markersInLayers = _.cloneDeep(markersTree)
 markers.addTo(markersInLayers, map, '', '', '', true)
 
 // Search
