@@ -55,10 +55,22 @@ export function getResultElement(type, clickCallback) {
   classes.forEach((theClass) => {
     el.classList.add(theClass)
   })
+  console.log(type)
+  let iconUrl = type['item']['iconUrl']
+  switch (type['item']['typeMarkerType']) {
+  case 'line':
+    iconUrl = 'images/line-icon.png'
+    break
+  case 'area':
+    iconUrl = 'images/area-icon.png'
+    break
+  default:
+    iconUrl = type['item']['iconUrl']
+  }
   el.innerHTML = `
     <div class="row">
       <div class="col text-center">
-        <img src="${type['item']['iconUrl']}" class="search-img">
+        <img src="${iconUrl}" class="search-img">
       </div>
       <div class="col-8">
         <div class="result-text">${type['item']['typeName']}</div>
