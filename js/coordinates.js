@@ -1,7 +1,7 @@
 L.Control.Coordinates = L.Control.extend({
 	options: {
 		position: 'bottomleft',
-		text: '[    0,     0]',
+		text: '[     0,      0]',
 		switchText: 'Copy on click'
 	},
 
@@ -20,8 +20,10 @@ L.Control.Coordinates = L.Control.extend({
 		return container
 	},
 
-	updateCoordinates: function(text) {
-		this.coordinates.innerHTML = `<pre>${text}</pre>`
+	updateCoordinates: function(point) {
+		const x = String(point.x).padStart(7, ' ')
+		const y = String(point.y).padStart(7, ' ')
+		this.coordinates.innerHTML = `<pre>[${x}, ${y}]</pre>`
 	}
 })
 

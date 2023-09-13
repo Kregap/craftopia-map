@@ -89,11 +89,10 @@ const creditsButton = credits.getControl()
 
 // Coordinates
 coordinatesLabel.addTo(map)
-let x = 0
-let y = 0
+let mouseCoordinates = L.point(0, 0)
 
 function onMapClick(e) {
-    const coordinates = `[${y}, ${x}]`
+    const coordinates = `[${mouseCoordinates.x}, ${mouseCoordinates.y}]`
     navigator.clipboard.writeText(coordinates);
     console.log(`copied coordinates: ${coordinates} to clipboard`)
     const coordinatesText = L.DomUtil.get('coordinates')
@@ -115,14 +114,10 @@ copySwitch.addEventListener('click', function(ev) {
 })
 
 map.on('mousemove', (ev) => {
-	x = Math.round(ev.latlng.lng)
-	y = Math.round(ev.latlng.lat)
-	coordinatesLabel.updateCoordinates(
-		'[' +
-		String(y).padStart(5, ' ') +
-		', ' +
-		String(x).padStart(5, ' ') + ']'
+	mouseCoordinates = markers.transform(
+		L.point(ev.latlng.lat, ev.latlng.lng)
 	)
+	coordinatesLabel.updateCoordinates(mouseCoordinates)
 })
 
 communityButton.addTo(map)

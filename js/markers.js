@@ -46,6 +46,26 @@ function arraysFromString(text) {
     return arrays
 }
 
+const multiplier = 1.3352
+const offsetX = -3267.2
+const offsetY = -2572.9
+
+const transformation = L.transformation(multiplier, offsetX, multiplier, offsetY)
+
+function xy(point) {
+    return L.point(point.y, point.x)
+}
+
+export function transform(point) {
+    const transformedPoint = transformation.transform(xy(point))
+    return L.point(transformedPoint.x.toFixed(1), transformedPoint.y.toFixed(1))
+}
+
+export function untransform(point) {
+    const transformedPoint = xy(transformation.untransform(point))
+    return L.point(transformedPoint.x.toFixed(1), transformedPoint.y.toFixed(1))
+}
+
 export async function getTree(defaultCategoryName) {
     let sheetMarkers = []
     let sheetCoordinates = []
@@ -136,8 +156,9 @@ export async function getTree(defaultCategoryName) {
                     const theType = markers[category][group][type]
                     switch (theType['markerType']) {
                         case 'point':
+                            const untransformedPoint = untransform(L.point(marker['coordinates']))
                             leafletMarkers[category][group][type]['markers'].push(L.marker(
-                                [marker['coordinates'][0], marker['coordinates'][1]],
+                                [untransformedPoint.x, untransformedPoint.y],
                                 {
                                     icon: L.icon({
                                         iconUrl: theType['iconUrl'],
@@ -148,14 +169,24 @@ export async function getTree(defaultCategoryName) {
                             ).bindTooltip(`${marker['id']}. ${type}`))
                             break
                         case 'line':
+                            const untransformedLine = []
+                            marker['coordinates'].forEach((arr) => {
+                                const point = untransform(L.point(arr))
+                                untransformedLine.push([point.x, point.y])
+                            })
                             leafletMarkers[category][group][type]['markers'].push(L.polyline(
-                                marker['coordinates'],
+                                untransformedLine,
                                 { color: theType['color'] }
                             ).bindTooltip(`${marker['id']}. ${type}`))
                             break
                         case 'area':
+                            const untransformedArea = []
+                            marker['coordinates'].forEach((arr) => {
+                                const point = untransform(L.point(arr))
+                                untransformedArea.push([point.x, point.y])
+                            })
                             leafletMarkers[category][group][type]['markers'].push(L.polygon(
-                                [].concat(marker['coordinates'],marker['coordinates'].slice(-1)),
+                                [].concat(untransformedArea, untransformedArea.slice(-1)),
                                 { color: theType['color'] }
                             ).bindTooltip(`${marker['id']}. ${type}`))
                             break
