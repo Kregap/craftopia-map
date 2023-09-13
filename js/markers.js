@@ -187,7 +187,7 @@ export async function getTree(defaultCategoryName) {
                             })
                             leafletMarkers[category][group][type]['markers'].push(L.polygon(
                                 [].concat(untransformedArea, untransformedArea.slice(-1)),
-                                { color: theType['color'] }
+                                { color: theType['color'], weight: 4, fillOpacity: 0.4 }
                             ).bindTooltip(`${marker['id']}. ${type}`))
                             break
                         default:
