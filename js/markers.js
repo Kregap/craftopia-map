@@ -46,9 +46,7 @@ function arraysFromString(text) {
     return arrays
 }
 
-export async function loadMarkers(map) {
-    const defaultCategoryName = 'Default'
-
+export async function getTree(defaultCategoryName) {
     let sheetMarkers = []
     let sheetCoordinates = []
     const sheetMarkersPromise = downloadMarkers().then(
@@ -93,74 +91,202 @@ export async function loadMarkers(map) {
     const markers = {}
     sheetCoordinates.forEach((sheetCoordinates) => {
         const markerType = markerTypes[sheetCoordinates['markeridentifier']]
+        const markerTypeName = markerType['name']
         let categoryName = defaultCategoryName
         if(markerType['categoryName'] != '') {
             categoryName = markerType['categoryName']
         }
+        const groupName = markerType['groupName']
 
         if(!(categoryName in markers)) { markers[categoryName] = {} }
-        if(!(markerType['groupName'] in markers[categoryName])) {
-            markers[categoryName][markerType['groupName']] = []
+        if(!(groupName in markers[categoryName])) {
+            markers[categoryName][groupName] = {}
         }
-        markers[categoryName][markerType['groupName']].push({
+        if(!(markerTypeName in markers[categoryName][groupName])) {
+            markers[categoryName][groupName][markerTypeName] = {
+                'markerType': markerType['type'],
+                'iconUrl': markerType['imageUrl'],
+                'iconSize': markerType['imageSize'],
+                'color': markerType['color'],
+                'markers': [],
+            }
+        }
+        markers[categoryName][groupName][markerTypeName]['markers'].push({
             'id': sheetCoordinates['id'],
-            'name': markerType['name'],
-            'type': markerType['type'],
-            'color': markerType['color'],
-            'imageUrl': markerType['imageUrl'],
             'coordinates': arraysFromString(sheetCoordinates['coordinates']),
-            'iconSize': markerType['imageSize']
         })
     })
     // console.log(markers)
 
     // Map marker details to Leaflet markers
+    const leafletMarkers = {}
     Object.keys(markers).forEach((category) => {
+        leafletMarkers[category] = {}
         Object.keys(markers[category]).forEach((group) => {
-            markers[category][group] = markers[category][group].map((marker) => {
-                switch (marker['type']) {
-                    case 'point':
-                        return L.marker(
-                            [marker['coordinates'][0], marker['coordinates'][1]],
-                            {
-                                icon: L.icon({
-                                iconUrl: marker['imageUrl'],
-                                iconSize: marker['iconSize'],
-                                tooltipAnchor: [marker['iconSize'][0]/2, 0]
-                            })}
-                        ).bindTooltip(`${marker['id']}. ${marker['name']}`)
-                    case 'line':
-                        return L.polyline(
-                            marker['coordinates'],
-                            { color: marker['color'] }
-                        ).bindTooltip(`${marker['id']}. ${marker['name']}`)
-                    case 'area':
-                        return L.polygon(
-                            [].concat(marker['coordinates'],marker['coordinates'].slice(-1)),
-                            { color: marker['color'] }
-                        ).bindTooltip(`${marker['id']}. ${marker['name']}`)
-                    default:
-                        console.error(`[${marker['id']}. ${marker['name']}]: Marker type "${marker['type']}" is not supported!`)
+            leafletMarkers[category][group] = {}
+            Object.keys(markers[category][group]).forEach((type) => {
+                leafletMarkers[category][group][type] = {
+                    'markerType': markers[category][group][type]['markerType'],
+                    'iconUrl': markers[category][group][type]['iconUrl'],
+                    'iconSize': markers[category][group][type]['iconSize'],
+                    'color': markers[category][group][type]['color'],
+                    'markers': [],
                 }
+                markers[category][group][type]['markers'].forEach((marker) => {
+                    const theType = markers[category][group][type]
+                    switch (theType['markerType']) {
+                        case 'point':
+                            leafletMarkers[category][group][type]['markers'].push(L.marker(
+                                [marker['coordinates'][0], marker['coordinates'][1]],
+                                {
+                                    icon: L.icon({
+                                        iconUrl: theType['iconUrl'],
+                                        iconSize: theType['iconSize'],
+                                        tooltipAnchor: [theType['iconSize'][0]/2, 0]
+                                    })
+                                }
+                            ).bindTooltip(`${marker['id']}. ${type}`))
+                            break
+                        case 'line':
+                            leafletMarkers[category][group][type]['markers'].push(L.polyline(
+                                marker['coordinates'],
+                                { color: theType['color'] }
+                            ).bindTooltip(`${marker['id']}. ${type}`))
+                            break
+                        case 'area':
+                            leafletMarkers[category][group][type]['markers'].push(L.polygon(
+                                [].concat(marker['coordinates'],marker['coordinates'].slice(-1)),
+                                { color: theType['color'] }
+                            ).bindTooltip(`${marker['id']}. ${type}`))
+                            break
+                        default:
+                            console.error(`[${marker['id']}. ${type}]: Marker type "${theType['type']}" is not supported!`)
+                    }
+                })
             })
         })
     })
-    // console.log(markers)
+    // console.log(leafletMarkers)
+    return leafletMarkers
+}
 
-    // Map groups to Leaflet groups
-    Object.keys(markers).forEach((category) => {
-        Object.keys(markers[category]).forEach((group) => {
-            markers[category][group] = L.layerGroup(markers[category][group]).addTo(map);
+export function getTypes(markersTree) {
+    const types = []
+    Object.keys(markersTree).forEach((category) => {
+        Object.keys(markersTree[category]).forEach((group) => {
+            Object.keys(markersTree[category][group]).forEach((type) => {
+                types.push({
+                    'typeName': type,
+                    'groupName': group,
+                    'categoryName': category,
+                    'typeMarkerType': markersTree[category][group][type]['markerType'],
+                    'iconUrl': markersTree[category][group][type]['iconUrl'],
+                })
+            })
         })
     })
-    // console.log(markers)
+    return types
+}
 
-    // Create Leaflet layers
-    const overlays = {}
-    Object.keys(markers[defaultCategoryName]).forEach((group) => {
-        overlays[group] = markers[defaultCategoryName][group]
+export function remove(markersTree, categoryName = '', groupName = '', typeName = '') {
+    const categories = []
+    if(categoryName != '') {
+        categories.push(markersTree[categoryName])
+    } else {
+        Object.keys(markersTree).forEach((category) => {
+            categories.push(markersTree[category])
+        })
+    }
+    categories.forEach((category) => {
+        const groups = []
+        if(groupName != '') {
+            groups.push(category[groupName])
+        } else {
+            Object.keys(category).forEach((group) => {
+                groups.push(category[group])
+            })
+        }
+        groups.forEach((group) => {
+            const types = []
+            if(typeName != '') {
+                types.push(group[typeName])
+            } else {
+                Object.keys(group).forEach((type) => {
+                    types.push(group[type])
+                })
+            }
+            types.forEach((type) => {
+                type['markers'].forEach((marker) => {
+                    marker.remove()
+                })
+            })
+        })
     })
+}
 
-    // Add Leaflet layers to the map
-    L.control.layers({}, overlays).addTo(map);
+export function addTo(
+    markersTree, map, categoryName = '', groupName = '', typeName = '', putToLayers = false,
+) {
+    if(putToLayers) {
+        const defaultGroup = 'Towers'
+        const overlay = {}
+
+        Object.keys(markersTree).forEach((category) => {
+            Object.keys(markersTree[category]).forEach((group) => {
+                overlay[group] = []
+                Object.keys(markersTree[category][group]).forEach((type) => {
+                    overlay[group] = overlay[group].concat(markersTree[category][group][type]['markers'])
+                })
+            })
+        })
+        Object.keys(overlay).forEach((leafletGroup) => {
+            overlay[leafletGroup] = L.layerGroup(overlay[leafletGroup])
+            if(leafletGroup == defaultGroup) {
+                overlay[leafletGroup].addTo(map)
+            }
+        })
+
+        const layerControl = L.control.layers({}, {}).addTo(map);
+        Object.keys(overlay).forEach((layerName) => {
+            layerControl.addOverlay(overlay[layerName], layerName).addTo(map);
+        })
+    } else {
+        const markers = []
+        const categories = []
+        if(categoryName != '') {
+            categories.push(markersTree[categoryName])
+        } else {
+            Object.keys(markersTree).forEach((category) => {
+                categories.push(markersTree[category])
+            })
+        }
+        categories.forEach((category) => {
+            const groups = []
+            if(groupName != '') {
+                groups.push(category[groupName])
+            } else {
+                Object.keys(category).forEach((group) => {
+                    groups.push(category[group])
+                })
+            }
+            groups.forEach((group) => {
+                const types = []
+                if(typeName != '') {
+                    types.push(group[typeName])
+                } else {
+                    Object.keys(group).forEach((type) => {
+                        types.push(group[type])
+                    })
+                }
+                types.forEach((type) => {
+                    type['markers'].forEach((marker) => {
+                        marker.addTo(map)
+                        markers.push(marker)
+                    })
+                })
+            })
+        })
+        let featureGroup = L.featureGroup(markers)
+        map.flyToBounds(featureGroup.getBounds(), { 'padding': [100, 100] })
+    }
 }
