@@ -30,74 +30,10 @@
         </script>
 
         <!-- My files -->
+        <link rel="stylesheet" type="text/css" href="css/main.css">
         <link rel="stylesheet" type="text/css" href="css/search.css">
         <link rel="stylesheet" type="text/css" href="css/credits.css">
         <link rel="stylesheet" type="text/css" href="css/coordinates.css">
-
-        <style>
-            :root {
-                --color-accent: #1c7088;
-                --color-faded: gray;
-            }
-
-            body {
-                margin: 0px;
-                font-family: Helvetica Neue, sans-serif
-            }
-
-            #map { 
-                height: 100vh; 
-                background-color: #296568;
-                cursor: crosshair;
-            }
-
-            .floating {
-                position: absolute;
-                z-index: 999;
-            }
-
-            #game-logo {
-                pointer-events: none;
-                top: 50px;
-                left: 50vw;
-                transform: translateX(-50%);
-                -webkit-filter: drop-shadow(5px 5px 5px #222);
-                filter: drop-shadow(5px 5px 5px #222);
-            }
-
-            #search-container {
-                top: 12px;
-                left: 54px;
-                width: calc(20vw - 100px);
-                min-width: 300px;
-            }
-
-            button, .leaflet-modal {
-                background-color: white;
-                border: 1px solid rgba(0, 0, 0, 0.7);
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-                border-radius: 3px;
-                padding: 3px;
-            }
-
-            button {
-                font-weight: bold;
-                background-color: #fff;
-                height: 30px;
-                width: 30px;
-            }
-
-
-            button:hover {
-                background-color: #f4f4f4;
-            }
-
-            #reset-hint {
-                color: white;
-                display: none;
-            }
-
-        </style>
     </head>
     <body>
         <div id="map"></div>

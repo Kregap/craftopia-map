@@ -11,7 +11,6 @@ L.Control.Community = L.Control.extend({
     const button = L.DomUtil.create('button', 'leaflet-control-community-button', link);
     const icon = L.DomUtil.create('img', 'leaflet-control-community-icon', button)
     link.href = this.options.url
-    button.style = 'padding: 3px;'
     icon.src = this.options.iconUrl
     icon.style = "width: 100%"
 

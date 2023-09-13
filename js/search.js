@@ -60,7 +60,7 @@ export function getResultElement(type, clickCallback) {
       <div class="col text-center">
         <img src="${type['item']['iconUrl']}" class="search-img">
       </div>
-      <div class="col-9">
+      <div class="col-8">
         <div class="result-text">${type['item']['typeName']}</div>
       </div>
     </div>

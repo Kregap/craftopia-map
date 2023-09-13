@@ -3,10 +3,6 @@
 	padding: 10px;
 }
 
-.leaflet-modal-container {
-	background-color: white;
-}
-
 .credits-header {
 	font-weight: bold;
 	line-height: 2rem;
@@ -31,5 +27,7 @@
 .credits-contribution {
 	display: block;
 	font-size: 0.5 rem;
+	max-width: 250px;
 	padding: 0px 10px;
+	overflow-wrap: normal;
 }
