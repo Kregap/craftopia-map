@@ -24,7 +24,7 @@ const map = L.map('map', {
     maxZoom: 0
 });
 const bounds = [[0,0], [3000,6000]];
-const image = L.imageOverlay('images/maps/Map - Blank.png', bounds).addTo(map);
+const image = L.imageOverlay('images/maps/Map - Blank.webp', bounds).addTo(map);
 map.fitBounds(bounds);
 
 const defaultCategoryName = 'Default'
