@@ -5,7 +5,7 @@ L.Control.Community = L.Control.extend({
     iconUrl: 'https://static-00.iconduck.com/assets.00/discord-icon-256x256-mihmpmuj.png',
   },
 
-  onAdd: function(map) {
+  onAdd: function (map) {
     const container = L.DomUtil.create('div', 'leaflet-control-community');
     const link = L.DomUtil.create('a', 'leaflet-control-community-link', container)
     const button = L.DomUtil.create('button', 'leaflet-control-community-button', link);

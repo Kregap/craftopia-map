@@ -17,13 +17,13 @@ this._directMap={};return this};d.prototype.stopCallback=function(a,b){if(-1<(" 
 d.init=function(){var a=d(u),b;for(b in a)"_"!==b.charAt(0)&&(d[b]=function(b){return function(){return a[b].apply(a,arguments)}}(b))};d.init();q.Mousetrap=d;"undefined"!==typeof module&&module.exports&&(module.exports=d);"function"===typeof define&&define.amd&&define(function(){return d})}})("undefined"!==typeof window?window:null,"undefined"!==typeof window?document:null);
 
 const map = L.map('map', {
-    crs: L.CRS.Simple,
-    zoomSnap: 0,
-    zoomDelta: 0.25,
-    minZoom: -1.75,
-    maxZoom: 0
+  crs: L.CRS.Simple,
+  zoomSnap: 0,
+  zoomDelta: 0.25,
+  minZoom: -1.75,
+  maxZoom: 0
 });
-const bounds = [[0,0], [3000,6000]];
+const bounds = [[0, 0], [3000, 6000]];
 const image = L.imageOverlay('images/maps/Map - Blank.webp', bounds).addTo(map);
 map.fitBounds(bounds);
 
@@ -36,50 +36,50 @@ markers.addTo(markersInLayers, map, '', '', '', true)
 
 // Search
 function resetMap() {
-	markers.remove(markersTree)
-    searchInput.value = ''
-    search.hideHint()
-	search.hideResults()
+  markers.remove(markersTree)
+  searchInput.value = ''
+  search.hideHint()
+  search.hideResults()
 }
 
 Mousetrap.bind('esc', resetMap)
 const escHint = L.DomUtil.get('reset-hint')
 escHint.addEventListener('click', resetMap)
 
-Mousetrap.bind('/', function(ev) {
-	searchInput.focus()
+Mousetrap.bind('/', function (ev) {
+  searchInput.focus()
 })
 
 function filterMarkers(category, group, type) {
-	searchInput.value = type
-	search.showHint()
-	markers.remove(markersTree)
-	markers.addTo(markersTree, map, category, group, type)
-	search.hideResults()
+  searchInput.value = type
+  search.showHint()
+  markers.remove(markersTree)
+  markers.addTo(markersTree, map, category, group, type)
+  search.hideResults()
 }
 
 const searchInput = L.DomUtil.get('marker-search-input')
-searchInput.addEventListener('focus', function() {
-	resetMap()
+searchInput.addEventListener('focus', function () {
+  resetMap()
 })
-searchInput.addEventListener('input', function() {
-	if(searchInput.value == '/') {
-		searchInput.value = ''
-	}
-	const searchText = searchInput.value
-	const resultsContainer = L.DomUtil.get('search-results')
-	if(searchText.length >= 3) {
-		const results = search.type(types, searchText)
-		const searchResultsList = L.DomUtil.get('search-results-list')
-		searchResultsList.innerHTML = ''
-		results.forEach((result) => {
-			searchResultsList.appendChild(search.getResultElement(result, filterMarkers))
-		})
-		search.showResults()
-	} else {
-		search.hideResults()
-		markers.remove(markersTree)
-	}
+searchInput.addEventListener('input', function () {
+  if (searchInput.value == '/') {
+    searchInput.value = ''
+  }
+  const searchText = searchInput.value
+  const resultsContainer = L.DomUtil.get('search-results')
+  if (searchText.length >= 3) {
+    const results = search.type(types, searchText)
+    const searchResultsList = L.DomUtil.get('search-results-list')
+    searchResultsList.innerHTML = ''
+    results.forEach((result) => {
+      searchResultsList.appendChild(search.getResultElement(result, filterMarkers))
+    })
+    search.showResults()
+  } else {
+    search.hideResults()
+    markers.remove(markersTree)
+  }
 })
 
 // Additional controls
@@ -92,32 +92,32 @@ coordinatesLabel.addTo(map)
 let mouseCoordinates = L.point(0, 0)
 
 function onMapClick(e) {
-    const coordinates = `[${mouseCoordinates.x}, ${mouseCoordinates.y}]`
-    navigator.clipboard.writeText(coordinates);
-    console.log(`copied coordinates: ${coordinates} to clipboard`)
-    const coordinatesText = L.DomUtil.get('coordinates')
-    coordinatesText.classList.remove('flash')
+  const coordinates = `[${mouseCoordinates.x}, ${mouseCoordinates.y}]`
+  navigator.clipboard.writeText(coordinates);
+  console.log(`copied coordinates: ${coordinates} to clipboard`)
+  const coordinatesText = L.DomUtil.get('coordinates')
+  coordinatesText.classList.remove('flash')
+  requestAnimationFrame((time) => {
     requestAnimationFrame((time) => {
-		requestAnimationFrame((time) => {
-    		coordinatesText.classList.add('flash')
-		})
-	})
+      coordinatesText.classList.add('flash')
+    })
+  })
 }
 
 const copySwitch = L.DomUtil.get('copySwitch')
-copySwitch.addEventListener('click', function(ev) {
-	if(copySwitch.checked) {
-		map.on('click', onMapClick)
-	} else {
-		map.off('click', onMapClick)
-	}
+copySwitch.addEventListener('click', function (ev) {
+  if (copySwitch.checked) {
+    map.on('click', onMapClick)
+  } else {
+    map.off('click', onMapClick)
+  }
 })
 
 map.on('mousemove', (ev) => {
-	mouseCoordinates = markers.transform(
-		L.point(ev.latlng.lat, ev.latlng.lng)
-	)
-	coordinatesLabel.updateCoordinates(mouseCoordinates)
+  mouseCoordinates = markers.transform(
+    L.point(ev.latlng.lat, ev.latlng.lng)
+  )
+  coordinatesLabel.updateCoordinates(mouseCoordinates)
 })
 
 communityButton.addTo(map)

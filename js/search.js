@@ -48,7 +48,7 @@ export function hideHint() {
 export function getResultElement(type, clickCallback) {
   const el = document.createElement('a')
   el.href = '#'
-  el.addEventListener("click", function() {
+  el.addEventListener("click", function () {
     clickCallback(type['item']['categoryName'], type['item']['groupName'], type['item']['typeName'])
   })
   const classes = ['list-group-item', 'list-group-item-action', 'search-result', 'container']
@@ -58,14 +58,14 @@ export function getResultElement(type, clickCallback) {
   console.log(type)
   let iconUrl = type['item']['iconUrl']
   switch (type['item']['typeMarkerType']) {
-  case 'line':
-    iconUrl = 'images/line-icon.png'
-    break
-  case 'area':
-    iconUrl = 'images/area-icon.png'
-    break
-  default:
-    iconUrl = type['item']['iconUrl']
+    case 'line':
+      iconUrl = 'images/line-icon.png'
+      break
+    case 'area':
+      iconUrl = 'images/area-icon.png'
+      break
+    default:
+      iconUrl = type['item']['iconUrl']
   }
   el.innerHTML = `
     <div class="row">
