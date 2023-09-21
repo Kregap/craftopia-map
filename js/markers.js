@@ -1,8 +1,11 @@
 import * as spreadsheet from './spreadsheet.js'
+import * as language from './language.js'
+
+const fallbackLanguage = language.getFallbackLanguage()
 
 async function downloadMarkers() {
   const sheetName = 'markers';
-  const query = 'Select B,C,D,E,F,G,H';
+  const query = 'Select B,C,D,E,F,G,H,I,J,K';
   return spreadsheet.fetchTable(sheetName, query)
 }
 
@@ -66,7 +69,7 @@ export function untransform(point) {
   return L.point(transformedPoint.x.toFixed(1), transformedPoint.y.toFixed(1))
 }
 
-export async function getTree(defaultCategoryName) {
+export async function getTree(defaultCategoryName, language) {
   let sheetMarkers = []
   let sheetCoordinates = []
   const sheetMarkersPromise = downloadMarkers().then(
@@ -84,13 +87,27 @@ export async function getTree(defaultCategoryName) {
   const markerTypes = {}
   sheetMarkers.forEach((sheetMarker) => {
     markerTypes[sheetMarker['uniqueidentifier']] = {
-      'categoryName': sheetMarker['categoryname'],
-      'groupName': sheetMarker['groupname'],
-      'name': sheetMarker['name'],
       'type': sheetMarker['type'],
       'color': sheetMarker['color'],
       'imageUrl': sheetMarker['imageurl']
     }
+    
+    let translatedCategoryName = sheetMarker[`categoryname(${language})`]
+    let translatedGroupName = sheetMarker[`groupname(${language})`]
+    let translatedName = sheetMarker[`name(${language})`]
+    if (translatedCategoryName == '') {
+      translatedCategoryName = sheetMarker[`categoryname(${fallbackLanguage})`]
+    }
+    if (translatedGroupName == '') {
+      translatedGroupName = sheetMarker[`groupname(${fallbackLanguage})`]
+    }
+    if (translatedName == '') {
+      translatedName = sheetMarker[`name(${fallbackLanguage})`]
+    }
+
+    markerTypes[sheetMarker['uniqueidentifier']]['categoryName'] = translatedCategoryName
+    markerTypes[sheetMarker['uniqueidentifier']]['groupName'] = translatedGroupName
+    markerTypes[sheetMarker['uniqueidentifier']]['name'] = translatedName
   })
   // console.log(markerTypes)
 
@@ -281,6 +298,7 @@ export function addTo(
     Object.keys(overlay).forEach((layerName) => {
       layerControl.addOverlay(overlay[layerName], layerName).addTo(map);
     })
+    return layerControl
   } else {
     const markers = []
     const categories = []

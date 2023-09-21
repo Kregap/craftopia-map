@@ -55,7 +55,7 @@ export function getResultElement(type, clickCallback) {
   classes.forEach((theClass) => {
     el.classList.add(theClass)
   })
-  console.log(type)
+  // console.log(type)
   let iconUrl = type['item']['iconUrl']
   switch (type['item']['typeMarkerType']) {
     case 'line':

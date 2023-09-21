@@ -1,4 +1,5 @@
 import * as markers from './js/markers.js'
+import * as languageModule from './js/language.js'
 import * as search from './js/search.js'
 import * as coordinates from './js/coordinates.js'
 import * as community from './js/community.js'
@@ -16,6 +17,9 @@ escape:"esc",plus:"+",mod:/Mac|iPod|iPhone|iPad/.test(navigator.platform)?"meta"
 this._directMap={};return this};d.prototype.stopCallback=function(a,b){if(-1<(" "+b.className+" ").indexOf(" mousetrap ")||D(b,this.target))return!1;if("composedPath"in a&&"function"===typeof a.composedPath){var c=a.composedPath()[0];c!==a.target&&(b=c)}return"INPUT"==b.tagName||"SELECT"==b.tagName||"TEXTAREA"==b.tagName||b.isContentEditable};d.prototype.handleKey=function(){return this._handleKey.apply(this,arguments)};d.addKeycodes=function(a){for(var b in a)a.hasOwnProperty(b)&&(n[b]=a[b]);p=null};
 d.init=function(){var a=d(u),b;for(b in a)"_"!==b.charAt(0)&&(d[b]=function(b){return function(){return a[b].apply(a,arguments)}}(b))};d.init();q.Mousetrap=d;"undefined"!==typeof module&&module.exports&&(module.exports=d);"function"===typeof define&&define.amd&&define(function(){return d})}})("undefined"!==typeof window?window:null,"undefined"!==typeof window?document:null);
 
+let selectedLanguage = languageModule.getSelected()
+languageModule.setLanguage(selectedLanguage)
+
 const map = L.map('map', {
   crs: L.CRS.Simple,
   zoomSnap: 0,
@@ -24,22 +28,38 @@ const map = L.map('map', {
   maxZoom: 0
 });
 const bounds = [[0, 0], [3000, 6000]];
-const image = L.imageOverlay('images/maps/Map - Blank.webp', bounds).addTo(map);
+L.imageOverlay('images/maps/Map - Blank.webp', bounds).addTo(map);
 map.fitBounds(bounds);
 
-const defaultCategoryName = 'Default'
-const markersTree = await markers.getTree(defaultCategoryName)
-const types = markers.getTypes(markersTree)
+let defaultCategoryName = 'Default'
+let markersTree
+let types
+let markersInLayers
+let layerControl
 
-const markersInLayers = _.cloneDeep(markersTree)
-markers.addTo(markersInLayers, map, '', '', '', true)
+async function reloadMarkers() {
+  // Clear old
+  if (!(markersTree === undefined)) {
+    resetMap()
+    markers.remove(markersInLayers)
+    map.removeControl(layerControl)
+  }
+
+  // Load new
+  markersTree = await markers.getTree(defaultCategoryName, selectedLanguage)
+  types = markers.getTypes(markersTree)
+  markersInLayers = _.cloneDeep(markersTree)
+  layerControl = markers.addTo(markersInLayers, map, '', '', '', true)
+}
+
+reloadMarkers()
 
 // Search
 function resetMap() {
-  markers.remove(markersTree)
   searchInput.value = ''
   search.hideHint()
   search.hideResults()
+  markers.remove(markersTree)
 }
 
 Mousetrap.bind('esc', resetMap)
@@ -67,7 +87,6 @@ searchInput.addEventListener('input', function () {
     searchInput.value = ''
   }
   const searchText = searchInput.value
-  const resultsContainer = L.DomUtil.get('search-results')
   if (searchText.length >= 3) {
     const results = search.type(types, searchText)
     const searchResultsList = L.DomUtil.get('search-results-list')
@@ -83,11 +102,33 @@ searchInput.addEventListener('input', function () {
 })
 
 // Additional controls
-const coordinatesLabel = coordinates.getControl()
-const communityButton = community.getControl()
-const creditsButton = credits.getControl()
+// Localisation / translation / flags
+function translate(selectedLang) {
+  selectedLanguage = selectedLang
+  languageModule.setLanguage(selectedLang)
+  reloadMarkers()
+}
+const languages = ['en', 'jp']
+const flags = []
+languages.forEach(lang => {
+  flags.push(
+    languageModule.getControl({
+      id: `${lang}-flag`,
+      language: lang,
+      iconUrl: `images/flag-icons/${lang}.webp`,
+      selected: (lang == selectedLanguage) ? true : false,
+      selectionCallback: translate,
+    }),
+  )
+})
+
+flags.forEach(flag => {
+  flag.addTo(map)
+})
+
 
 // Coordinates
+const coordinatesLabel = coordinates.getControl()
 coordinatesLabel.addTo(map)
 let mouseCoordinates = L.point(0, 0)
 
@@ -120,5 +161,8 @@ map.on('mousemove', (ev) => {
   coordinatesLabel.updateCoordinates(mouseCoordinates)
 })
 
+// Other controls
+const communityButton = community.getControl()
+const creditsButton = credits.getControl()
 communityButton.addTo(map)
 creditsButton.addTo(map)

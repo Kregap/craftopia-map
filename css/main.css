@@ -18,36 +18,30 @@ body {
   z-index: 999;
 }
 
-#game-logo {
-  pointer-events: none;
-  top: 50px;
-  left: 50vw;
-  transform: translateX(-50%);
-  -webkit-filter: drop-shadow(5px 5px 5px #222);
-  filter: drop-shadow(5px 5px 5px #222);
+#top-bar {
+  top: 12px;
+  left: 54px;
 }
 
 #search-container {
-  top: 12px;
-  left: 54px;
-  width: calc(20vw);
-  min-width: 300px;
+  width: 20vw;
+  min-width: 400px;
 }
 
 button,
 .leaflet-modal {
   background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.7);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(0, 0, 0, 0.2);
   border-radius: 3px;
+  background-clip: padding-box;
 }
 
 button {
   font-weight: bold;
   background-color: #fff;
   padding: 3px;
-  height: 30px;
-  width: 30px;
+  height: 34px;
+  width: 34px;
 }
 
 button:hover {
