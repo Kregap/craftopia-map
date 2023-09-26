@@ -25,11 +25,17 @@ const map = L.map('map', {
   zoomSnap: 0,
   zoomDelta: 0.25,
   minZoom: -1.75,
-  maxZoom: 0
+  maxZoom: 0,
+  attributionControl: false
 });
 const bounds = [[0, 0], [3000, 6000]];
 L.imageOverlay('images/maps/Map - Blank.webp', bounds).addTo(map);
 map.fitBounds(bounds);
+
+const attributionControl =  L.control.attribution()
+attributionControl.addAttribution('<a href="https://github.com/Kregap/craftopia-map">Code</a>')
+attributionControl.addAttribution('<a href="https://docs.google.com/spreadsheets/d/1m_MW0M2kCiKJtVJ6anJQOqbHOILGh10Q6TtNCQK_KCw">Markers</a>')
+attributionControl.addTo(map)
 
 let defaultCategoryName = 'Default'
 let markersTree
