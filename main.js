@@ -28,9 +28,15 @@ const map = L.map('map', {
   maxZoom: 0,
   attributionControl: false
 });
-const bounds = [[0, 0], [3000, 6000]];
+const bounds = [[0, 0], [3000, 6000]]
+const firstCorner = markers.untransform(L.point(-3649.8, -3051.9))
+const secondCorner = markers.untransform(L.point(5185.3, 1895.0))
 L.imageOverlay('images/maps/Map - Blank.webp', bounds).addTo(map);
 map.fitBounds(bounds);
+map.setMaxBounds([
+  [firstCorner.x, firstCorner.y],
+  [secondCorner.x, secondCorner.y],
+])
 
 const attributionControl =  L.control.attribution()
 attributionControl.addAttribution('<a href="https://github.com/Kregap/craftopia-map">Code</a>')
