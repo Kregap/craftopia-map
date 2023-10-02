@@ -232,6 +232,7 @@ export async function getTree(defaultCategoryName, language) {
           // Add marker type details
           if (markers[category][group][type]['details'] != '') {
             details = `${details}
+            <hr>
             ${markers[category][group][type]['details']}`
           }
           // Add specific marker details

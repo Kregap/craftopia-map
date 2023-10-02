@@ -26,6 +26,14 @@ body {
   margin: auto;
 }
 
+.leaflet-popup-content-wrapper p {
+  margin: 0;
+}
+
+.leaflet-popup-content-wrapper hr {
+  margin: 0.5rem 0;
+}
+
 .floating {
   position: absolute;
   z-index: 999;
