@@ -1,17 +1,18 @@
 import * as spreadsheet from './spreadsheet.js'
 import * as language from './language.js'
+import * as markdown from './markdown.js'
 
 const fallbackLanguage = language.getFallbackLanguage()
 
 async function downloadMarkers() {
   const sheetName = 'markers';
-  const query = 'Select B,C,D,E,F,G,H,I,J,K';
+  const query = 'Select B,C,D,E,F,G,H,I,J,K,L,M';
   return spreadsheet.fetchTable(sheetName, query)
 }
 
 async function downloadCoordinates() {
   const sheetName = 'coordinates';
-  const query = 'Select A,D,E';
+  const query = 'Select A,D,E,F,G';
   return spreadsheet.fetchTable(sheetName, query)
 }
 
@@ -95,6 +96,7 @@ export async function getTree(defaultCategoryName, language) {
     let translatedCategoryName = sheetMarker[`categoryname(${language})`]
     let translatedGroupName = sheetMarker[`groupname(${language})`]
     let translatedName = sheetMarker[`name(${language})`]
+    let translatedDetails = sheetMarker[`details(${language})`]
     if (translatedCategoryName == '') {
       translatedCategoryName = sheetMarker[`categoryname(${fallbackLanguage})`]
     }
@@ -104,10 +106,14 @@ export async function getTree(defaultCategoryName, language) {
     if (translatedName == '') {
       translatedName = sheetMarker[`name(${fallbackLanguage})`]
     }
+    if (translatedDetails == '') {
+      translatedDetails = sheetMarker[`details(${fallbackLanguage})`]
+    }
 
     markerTypes[sheetMarker['uniqueidentifier']]['categoryName'] = translatedCategoryName
     markerTypes[sheetMarker['uniqueidentifier']]['groupName'] = translatedGroupName
     markerTypes[sheetMarker['uniqueidentifier']]['name'] = translatedName
+    markerTypes[sheetMarker['uniqueidentifier']]['details'] = translatedDetails
   })
   // console.log(markerTypes)
 
@@ -142,15 +148,22 @@ export async function getTree(defaultCategoryName, language) {
     if (!(markerTypeName in markers[categoryName][groupName])) {
       markers[categoryName][groupName][markerTypeName] = {
         'markerType': markerType['type'],
+        'details': markerType['details'],
         'iconUrl': markerType['imageUrl'],
         'iconSize': markerType['imageSize'],
         'color': markerType['color'],
         'markers': [],
       }
     }
+
+    let details = sheetCoordinates[`details(${language})`]
+    if (details == '') {
+      details = sheetCoordinates[`details(${fallbackLanguage})`]
+    }
     markers[categoryName][groupName][markerTypeName]['markers'].push({
       'id': sheetCoordinates['id'],
       'coordinates': arraysFromString(sheetCoordinates['coordinates']),
+      'details': details
     })
   })
   // console.log(markers)
@@ -210,6 +223,36 @@ export async function getTree(defaultCategoryName, language) {
             default:
               console.error(`[${marker['id']}. ${type}]: Marker type "${theType['type']}" is not supported!`)
           }
+          const lastMarkerId = leafletMarkers[category][group][type]['markers'].length -1
+          const lastLeafletMarker = leafletMarkers[category][group][type]['markers'][lastMarkerId]
+          // Add popup details
+          let details = `
+          ${marker['id']}. ${type}
+          `
+          // Add marker type details
+          if (markers[category][group][type]['details'] != '') {
+            details = `${details}
+            ${markers[category][group][type]['details']}`
+          }
+          // Add specific marker details
+          if (marker['details'] != '') {
+            details = `${details}
+            <hr>
+            ${marker['details']}`
+          }
+          // Create popup
+          let popupOffset = [0, 0]
+          if (markers[category][group][type]['markerType'] == 'point') {
+            popupOffset = [0, markers[category][group][type]['iconSize'][1] / -4]
+          }
+          lastLeafletMarker.bindPopup(
+            markdown.parse(details),
+            {
+              offset: popupOffset,
+              closeButton: false,
+              autoPanPadding: L.point(70, 70)
+            }
+          )
         })
       })
     })

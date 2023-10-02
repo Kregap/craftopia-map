@@ -13,6 +13,19 @@ body {
   cursor: crosshair;
 }
 
+.leaflet-popup-content-wrapper img {
+  max-width: 300px;
+  display: block;
+  margin: auto;
+}
+
+.leaflet-popup-content-wrapper iframe {
+  width: 300px;
+  height: 170px;
+  display: block;
+  margin: auto;
+}
+
 .floating {
   position: absolute;
   z-index: 999;
