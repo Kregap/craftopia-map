@@ -20,23 +20,62 @@ d.init=function(){var a=d(u),b;for(b in a)"_"!==b.charAt(0)&&(d[b]=function(b){r
 let selectedLanguage = languageModule.getSelected()
 languageModule.setLanguage(selectedLanguage)
 
+L.Projection.Craftopia = L.extend({}, L.Projection.LonLat, {
+  project: function(latlng) {
+    return new L.Point(latlng.lat, latlng.lng);
+	},
+  
+	unproject: function(point) {
+    return new L.LatLng(point.x, point.y);
+	},
+})
+
+L.CRS.Craftopia = L.extend({}, L.CRS.Simple, {
+  projection: L.Projection.Craftopia,
+  transformation: new L.Transformation(1, 0, -1, 0),
+  
+  // Scale, zoom and distance are entirely unchanged from CRS.Simple
+  scale: function(zoom) {
+    return Math.pow(2, zoom);
+  },
+  
+  zoom: function(scale) {
+    return Math.log(scale) / Math.LN2;
+  },
+  
+  distance: function(latlng1, latlng2) {
+    var dx = latlng2.lng - latlng1.lng,
+    dy = latlng2.lat - latlng1.lat;
+    
+    return Math.sqrt(dx * dx + dy * dy);
+  },
+  infinite: true
+});
+
+
 const map = L.map('map', {
-  crs: L.CRS.Simple,
-  zoomSnap: 0,
+  crs: L.CRS.Craftopia,
+  zoomSnap: 0.25,
   zoomDelta: 0.25,
-  minZoom: -1.75,
-  maxZoom: 0,
+  minZoom: -2,
+  maxZoom: -0.3,
   attributionControl: false
 });
-const bounds = [[0, 0], [3000, 6000]]
-const firstCorner = markers.untransform(L.point(-6649.8, -6051.9))
-const secondCorner = markers.untransform(L.point(8185.3, 3895.0))
+
+const mapImageSize = [6000, 3000]
+const mapImageSizeOffset = [2445, 3000-1073]
+const scale = 1.3352  // map pixel bounds to map unit scale
+const bounds = [
+  [scale * -mapImageSizeOffset[0], scale * -mapImageSizeOffset[1]],
+  [scale * (mapImageSize[0] - mapImageSizeOffset[0]), scale * (mapImageSize[1] - mapImageSizeOffset[1])]
+]
 L.imageOverlay('images/maps/Map - Blank.webp', bounds).addTo(map);
 map.fitBounds(bounds);
-map.setMaxBounds([
-  [firstCorner.x, firstCorner.y],
-  [secondCorner.x, secondCorner.y],
-])
+
+const maxBoundsOffset = 0.3
+const maxBounds = L.latLngBounds(bounds).pad(maxBoundsOffset)
+console.log(maxBounds);
+map.setMaxBounds([maxBounds])
 
 const attributionControl =  L.control.attribution()
 attributionControl.addAttribution('<a href="https://github.com/Kregap/craftopia-map">Code</a>')
@@ -167,9 +206,7 @@ copySwitch.addEventListener('click', function (ev) {
 })
 
 map.on('mousemove', (ev) => {
-  mouseCoordinates = markers.transform(
-    L.point(ev.latlng.lat, ev.latlng.lng)
-  )
+  mouseCoordinates = L.point(ev.latlng.lat, ev.latlng.lng)
   coordinatesLabel.updateCoordinates(mouseCoordinates)
 })
 
