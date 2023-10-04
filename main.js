@@ -74,7 +74,6 @@ map.fitBounds(bounds);
 
 const maxBoundsOffset = 0.3
 const maxBounds = L.latLngBounds(bounds).pad(maxBoundsOffset)
-console.log(maxBounds);
 map.setMaxBounds([maxBounds])
 
 const attributionControl =  L.control.attribution()
@@ -206,7 +205,7 @@ copySwitch.addEventListener('click', function (ev) {
 })
 
 map.on('mousemove', (ev) => {
-  mouseCoordinates = L.point(ev.latlng.lat, ev.latlng.lng)
+  mouseCoordinates = L.point(ev.latlng.lat.toFixed(1), ev.latlng.lng.toFixed(1))
   coordinatesLabel.updateCoordinates(mouseCoordinates)
 })
 
