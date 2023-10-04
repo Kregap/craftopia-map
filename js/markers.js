@@ -194,9 +194,17 @@ export async function getTree(defaultCategoryName, language) {
           }
           const lastMarkerId = leafletMarkers[category][group][type]['markers'].length -1
           const lastLeafletMarker = leafletMarkers[category][group][type]['markers'][lastMarkerId]
+
           // Add popup details
           let details = `
-          ${marker['id']}. ${type}
+          <div>
+            <div class="coordinates">
+              [${String(marker['coordinates']).replaceAll(',', ', ')}]
+            </div>
+            <div class="name">
+              ${marker['id']}. ${type}
+            </div>
+          </div>
           `
           // Add marker type details
           if (markers[category][group][type]['details'] != '') {
@@ -220,7 +228,8 @@ export async function getTree(defaultCategoryName, language) {
             {
               offset: popupOffset,
               closeButton: false,
-              autoPanPadding: L.point(70, 70)
+              autoPanPadding: L.point(70, 70),
+              maxHeight: window.innerHeight * 0.7,
             }
           )
         })
