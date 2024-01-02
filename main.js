@@ -58,16 +58,21 @@ const map = L.map('map', {
   zoomSnap: 0.25,
   zoomDelta: 0.25,
   minZoom: -2,
-  maxZoom: -0.3,
+  maxZoom: -0.4,
   attributionControl: false
 });
 
-const mapImageSize = [6000, 3000]
-const mapImageSizeOffset = [2445, 3000-1073]
-const scale = 1.3352  // map pixel bounds to map unit scale
+const mapImageSize = [4096, 3584]
+const mapPxOrigin = [1794, 2304]  // game world [0, 0] point (map origin) in map image pixel coordinates
+const scale = 2.0045  // map pixel bounds to map unit scale
+
+const mapOrigin = [
+  mapPxOrigin[0],
+  mapImageSize[1] - mapPxOrigin[1]
+]  // origin switched to longitude, latitude which is coordinates system used by Leaflet
 const bounds = [
-  [scale * -mapImageSizeOffset[0], scale * -mapImageSizeOffset[1]],
-  [scale * (mapImageSize[0] - mapImageSizeOffset[0]), scale * (mapImageSize[1] - mapImageSizeOffset[1])]
+  [scale * -mapOrigin[0], scale * -mapOrigin[1]],
+  [scale * (mapImageSize[0] - mapOrigin[0]), scale * (mapImageSize[1] - mapOrigin[1])]
 ]
 L.imageOverlay('images/maps/Map - Blank.webp', bounds).addTo(map);
 map.fitBounds(bounds);
